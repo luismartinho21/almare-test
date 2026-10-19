@@ -20,12 +20,10 @@ const { width } = Dimensions.get('window');
 const halfWidth = width / 2;
 
 export const ClientHomeView: React.FC<ClientHomeViewProps> = ({ onSelectBranch }) => {
-  // Fade in suave dos botões na entrada
+  // Fade in de entrada dos 2 botões
   const buttonsFadeAnim = useRef(new Animated.Value(0)).current;
 
-  // Animação efeito folhear livro:
-  // 0 = fechado / posição normal
-  // 1 = folha aberta a 90 graus (abertura completa do livro)
+  // Valor de animação de 0 a 1 para o efeito livro
   const beautyBookAnim = useRef(new Animated.Value(0)).current;
   const barberBookAnim = useRef(new Animated.Value(0)).current;
 
@@ -38,7 +36,7 @@ export const ClientHomeView: React.FC<ClientHomeViewProps> = ({ onSelectBranch }
     }).start();
   }, [buttonsFadeAnim]);
 
-  // BEAUTY: Folheia para a esquerda como a capa/página esquerda de um livro (eixo na lombada central)
+  // BEAUTY (Esquerda): Folheia a página para fora/esquerda
   const handleBeautyPress = () => {
     Animated.timing(beautyBookAnim, {
       toValue: 1,
@@ -46,12 +44,11 @@ export const ClientHomeView: React.FC<ClientHomeViewProps> = ({ onSelectBranch }
       easing: Easing.inOut(Easing.cubic),
       useNativeDriver: true,
     }).start(() => {
-      beautyBookAnim.setValue(0);
       onSelectBranch('beauty');
     });
   };
 
-  // BARBER: Folheia para a direita como a página direita de um livro (eixo na lombada central)
+  // BARBER (Direita): Folheia a página para fora/direita
   const handleBarberPress = () => {
     Animated.timing(barberBookAnim, {
       toValue: 1,
@@ -59,40 +56,40 @@ export const ClientHomeView: React.FC<ClientHomeViewProps> = ({ onSelectBranch }
       easing: Easing.inOut(Easing.cubic),
       useNativeDriver: true,
     }).start(() => {
-      barberBookAnim.setValue(0);
       onSelectBranch('barber');
     });
   };
 
-  // Interpolações de rotação 3D com abertura realista de livro
+  // BEAUTY INTERPOLATIONS
   const beautyRotateY = beautyBookAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: ['0deg', '-88deg'],
+    outputRange: ['0deg', '-85deg'],
   });
 
   const beautyTranslateX = beautyBookAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, -halfWidth * 0.4],
+    outputRange: [0, -halfWidth * 0.45],
   });
 
   const beautyOpacity = beautyBookAnim.interpolate({
     inputRange: [0, 0.7, 1],
-    outputRange: [1, 0.8, 0],
+    outputRange: [1, 0.7, 0],
   });
 
+  // BARBER INTERPOLATIONS
   const barberRotateY = barberBookAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: ['0deg', '88deg'],
+    outputRange: ['0deg', '85deg'],
   });
 
   const barberTranslateX = barberBookAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, halfWidth * 0.4],
+    outputRange: [0, halfWidth * 0.45],
   });
 
   const barberOpacity = barberBookAnim.interpolate({
     inputRange: [0, 0.7, 1],
-    outputRange: [1, 0.8, 0],
+    outputRange: [1, 0.7, 0],
   });
 
   return (
@@ -107,7 +104,7 @@ export const ClientHomeView: React.FC<ClientHomeViewProps> = ({ onSelectBranch }
             {
               opacity: beautyOpacity,
               transform: [
-                { perspective: 1200 },
+                { perspective: 1000 },
                 { translateX: beautyTranslateX },
                 { rotateY: beautyRotateY },
               ],
@@ -117,7 +114,7 @@ export const ClientHomeView: React.FC<ClientHomeViewProps> = ({ onSelectBranch }
           <TouchableOpacity
             style={styles.beautyCard}
             onPress={handleBeautyPress}
-            activeOpacity={0.9}
+            activeOpacity={0.85}
           >
             <Text style={styles.beautyTitle}>ALMARE</Text>
             <Text style={styles.beautySubtitle}>BEAUTY</Text>
@@ -125,7 +122,7 @@ export const ClientHomeView: React.FC<ClientHomeViewProps> = ({ onSelectBranch }
           </TouchableOpacity>
         </Animated.View>
 
-        {/* Lombada central do livro (separador dourado com brilho subtil) */}
+        {/* Lombada central dourada do livro */}
         <View style={styles.spineDivider} />
 
         {/* BARBER — DIREITA (Preto e Dourado) */}
@@ -133,9 +130,10 @@ export const ClientHomeView: React.FC<ClientHomeViewProps> = ({ onSelectBranch }
           style={[
             styles.cardWrapper,
             {
+              backgroundColor: '#1E1E28', // Fundo de contraste para a rotação 3D ser 100% visível sobre o preto
               opacity: barberOpacity,
               transform: [
-                { perspective: 1200 },
+                { perspective: 1000 },
                 { translateX: barberTranslateX },
                 { rotateY: barberRotateY },
               ],
@@ -145,7 +143,7 @@ export const ClientHomeView: React.FC<ClientHomeViewProps> = ({ onSelectBranch }
           <TouchableOpacity
             style={styles.barberCard}
             onPress={handleBarberPress}
-            activeOpacity={0.9}
+            activeOpacity={0.85}
           >
             <Text style={styles.barberTitle}>ALMARE</Text>
             <Text style={styles.barberSubtitle}>BARBER</Text>
@@ -176,10 +174,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: -2, height: 0 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
+    borderRightWidth: 0.5,
+    borderRightColor: '#E2E8F0',
   },
   beautyTitle: {
     color: '#B8860B',
@@ -203,25 +199,19 @@ const styles = StyleSheet.create({
 
   /* Lombada central do livro */
   spineDivider: {
-    width: 1.5,
+    width: 2,
     backgroundColor: Theme.colors.brandSecondary,
-    opacity: 0.45,
-    shadowColor: '#D4AF37',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.5,
-    shadowRadius: 4,
+    opacity: 0.7,
   },
 
-  /* BARBER — direita: fundo preto */
+  /* BARBER — direita: fundo carvão/preto premium */
   barberCard: {
     flex: 1,
-    backgroundColor: '#0D0D11',
+    backgroundColor: '#111116',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 2, height: 0 },
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
+    borderLeftWidth: 0.5,
+    borderLeftColor: '#272733',
   },
   barberTitle: {
     color: '#D4AF37',
