@@ -171,7 +171,7 @@ export const BookingFlowView: React.FC<BookingFlowViewProps> = ({ onBackToHome }
         <Image
           source={require('../../assets/logo.jpg')}
           style={styles.topLogoImg}
-          resizeMode="cover"
+          resizeMode="contain"
         />
       </TouchableOpacity>
 
@@ -629,10 +629,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#0D0D11',
+    paddingVertical: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: '#22222A',
   },
   topLogoImg: {
-    width: '100%',
-    height: 150,
+    width: 140,
+    height: 90,
   },
   /* Step Bar */
   stepBar: {
