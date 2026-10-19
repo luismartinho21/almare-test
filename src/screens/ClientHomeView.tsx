@@ -23,7 +23,7 @@ export const ClientHomeView: React.FC<ClientHomeViewProps> = ({ onSelectBranch }
   // Fade in de entrada dos 2 botões
   const buttonsFadeAnim = useRef(new Animated.Value(0)).current;
 
-  // Valor de animação de 0 a 1 para o efeito livro
+  // Valor de animação de 0 a 1 para o efeito livro rodando para dentro (fechar/folhear em direção ao centro)
   const beautyBookAnim = useRef(new Animated.Value(0)).current;
   const barberBookAnim = useRef(new Animated.Value(0)).current;
 
@@ -36,7 +36,7 @@ export const ClientHomeView: React.FC<ClientHomeViewProps> = ({ onSelectBranch }
     }).start();
   }, [buttonsFadeAnim]);
 
-  // BEAUTY (Esquerda): Folheia a página para fora/esquerda
+  // BEAUTY (Esquerda): Roda PARA DENTRO (em direção ao centro/direita: 0 -> +85deg)
   const handleBeautyPress = () => {
     Animated.timing(beautyBookAnim, {
       toValue: 1,
@@ -48,7 +48,7 @@ export const ClientHomeView: React.FC<ClientHomeViewProps> = ({ onSelectBranch }
     });
   };
 
-  // BARBER (Direita): Folheia a página para fora/direita
+  // BARBER (Direita): Roda PARA DENTRO (em direção ao centro/esquerda: 0 -> -85deg)
   const handleBarberPress = () => {
     Animated.timing(barberBookAnim, {
       toValue: 1,
@@ -60,35 +60,35 @@ export const ClientHomeView: React.FC<ClientHomeViewProps> = ({ onSelectBranch }
     });
   };
 
-  // BEAUTY INTERPOLATIONS
+  // BEAUTY INTERPOLATIONS (virar para dentro)
   const beautyRotateY = beautyBookAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0deg', '-85deg'],
-  });
-
-  const beautyTranslateX = beautyBookAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, -halfWidth * 0.45],
-  });
-
-  const beautyOpacity = beautyBookAnim.interpolate({
-    inputRange: [0, 0.7, 1],
-    outputRange: [1, 0.7, 0],
-  });
-
-  // BARBER INTERPOLATIONS
-  const barberRotateY = barberBookAnim.interpolate({
     inputRange: [0, 1],
     outputRange: ['0deg', '85deg'],
   });
 
+  const beautyTranslateX = beautyBookAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, halfWidth * 0.4],
+  });
+
+  const beautyOpacity = beautyBookAnim.interpolate({
+    inputRange: [0, 0.75, 1],
+    outputRange: [1, 0.7, 0],
+  });
+
+  // BARBER INTERPOLATIONS (virar para dentro)
+  const barberRotateY = barberBookAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '-85deg'],
+  });
+
   const barberTranslateX = barberBookAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, halfWidth * 0.45],
+    outputRange: [0, -halfWidth * 0.4],
   });
 
   const barberOpacity = barberBookAnim.interpolate({
-    inputRange: [0, 0.7, 1],
+    inputRange: [0, 0.75, 1],
     outputRange: [1, 0.7, 0],
   });
 
@@ -102,6 +102,7 @@ export const ClientHomeView: React.FC<ClientHomeViewProps> = ({ onSelectBranch }
           style={[
             styles.cardWrapper,
             {
+              backgroundColor: '#ECECF0',
               opacity: beautyOpacity,
               transform: [
                 { perspective: 1000 },
@@ -130,7 +131,7 @@ export const ClientHomeView: React.FC<ClientHomeViewProps> = ({ onSelectBranch }
           style={[
             styles.cardWrapper,
             {
-              backgroundColor: '#1E1E28', // Fundo de contraste para a rotação 3D ser 100% visível sobre o preto
+              backgroundColor: '#1E1E28',
               opacity: barberOpacity,
               transform: [
                 { perspective: 1000 },
